@@ -1,5 +1,5 @@
 [package]
-name = "tree"
+name = "rtree"
 version = "0.1.0"
 edition = "2021"
 authors = ["takeweb takeweb@mac.com"]
@@ -8,3 +8,8 @@ description = "tree command wrtten by Rust"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = { version = "4.5.1", features = ["derive"] }
+
+[dev-dependencies]
+assert_cmd = "2.0.14"
+predicates = "3.1.0"
