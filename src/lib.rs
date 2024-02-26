@@ -1,6 +1,6 @@
 use std::{env, path};
 
-pub fn run(target: &path::PathBuf, level: isize, exclusion: &str) {
+pub fn run(target: &path::PathBuf, level: isize, exclusions: &Vec<String>) {
     // ファイル一覧を取得
     let files = target.read_dir().expect("存在しないパス");
 
@@ -13,13 +13,20 @@ pub fn run(target: &path::PathBuf, level: isize, exclusion: &str) {
 
         let fname = path.file_name().unwrap().to_string_lossy();
 
-        if exclusion != "" && None != fname.find(exclusion) {
+        let mut ex_flg = false;
+        for exclusion in exclusions {
+            if exclusion != "" && None != fname.find(exclusion) {
+                ex_flg = true;
+                continue;
+            }
+        }
+        if ex_flg {
             continue;
         }
 
         if path.is_dir() {
             println!("|-- <{}>", fname);
-            run(&path, level + 1, &exclusion);
+            run(&path, level + 1, &exclusions);
             continue;
         }
         println!("|-- <{}>", fname);

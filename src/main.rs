@@ -9,9 +9,14 @@ pub struct Args {
     #[arg(value_name = "TARGET DIR", default_value = ".")]
     target_dir: String,
 
-    /// Exclusion Keyword
-    #[arg(short = 'e', long = "exclusion", default_value = "")]
-    exclusion: String,
+    /// Exclusion Keywords
+    #[arg(
+        short = 'e',
+        long = "exclusions",
+        required = false,
+        value_delimiter(',')
+    )]
+    exclusions: Vec<String>,
 }
 
 fn main() {
@@ -22,5 +27,5 @@ fn main() {
     let target = path::PathBuf::from(&args.target_dir);
     println!("{}", rtree::get_current_dir(&args.target_dir));
 
-    rtree::run(&target, 0, &args.exclusion);
+    rtree::run(&target, 0, &args.exclusions);
 }
