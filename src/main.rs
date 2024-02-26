@@ -23,9 +23,16 @@ fn main() {
     // コマンドライン引数を解析
     let args = Args::parse();
 
-    // PathBufに変換
-    let target = path::PathBuf::from(&args.target_dir);
-    println!("{}", rtree::get_current_dir(&args.target_dir));
+    // コマンドをインスタンス化
+    let mut cmd = rtree::RtreeCmd::new();
 
-    rtree::run(&target, 0, &args.exclusions);
+    // ルートディレクトリを出力
+    cmd.print_current_dir(&args.target_dir);
+
+    // PathBufに変換
+    let target_path = path::PathBuf::from(&args.target_dir);
+    cmd.run(&target_path, 0, &args.exclusions);
+
+    // ディレクトリ、ファイルのカウントを出力
+    cmd.print_cnt();
 }
