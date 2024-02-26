@@ -8,7 +8,7 @@ pub fn run(target: &path::PathBuf, level: isize, exclusions: &Vec<String>) {
         let path = ent.unwrap().path();
 
         for _ in 1..=level {
-            print!("|  ");
+            print!("│  ");
         }
 
         let fname = path.file_name().unwrap().to_string_lossy();
