@@ -1,15 +1,20 @@
 use std::{env, fs, path};
 
 /// ツリーコマンド
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct RtreeCmd {
     d_cnt: isize,
     f_cnt: isize,
+    exclusions: Vec<String>,
 }
 impl RtreeCmd {
     /// ツリーコマンドの初期化
-    pub fn new() -> Self {
-        RtreeCmd { d_cnt: 0, f_cnt: 0 }
+    pub fn new(exclusions: Vec<String>) -> Self {
+        RtreeCmd {
+            d_cnt: 0,
+            f_cnt: 0,
+            exclusions,
+        }
     }
 
     /// ディレクトリ、ファイル表示実行
@@ -17,7 +22,7 @@ impl RtreeCmd {
     /// * `target_path` - 対象ディレクトリ
     /// * `level` - 階層レベル
     /// * `exclusions` - 除外キーワード
-    pub fn run(&mut self, target_path: &path::PathBuf, level: isize, exclusions: &Vec<String>) {
+    pub fn run(&mut self, target_path: &path::PathBuf, level: isize) {
         // ファイル一覧を取得
         let mut files: Vec<_> = fs::read_dir(target_path)
             .unwrap()
@@ -35,7 +40,7 @@ impl RtreeCmd {
             let fname = path.file_name().unwrap().to_string_lossy();
 
             let mut ex_flg = false;
-            for exclusion in exclusions {
+            for exclusion in &self.exclusions {
                 if exclusion != "" && None != fname.find(exclusion) {
                     ex_flg = true;
                     continue;
@@ -52,7 +57,7 @@ impl RtreeCmd {
             if path.is_dir() {
                 println!("├── {}", fname);
                 self.d_cnt += 1;
-                self.run(&path, level + 1, &exclusions);
+                self.run(&path, level + 1);
                 continue;
             }
             println!("├── {}", fname);

@@ -24,14 +24,14 @@ fn main() {
     let args = Args::parse();
 
     // コマンドをインスタンス化
-    let mut cmd = rtree::RtreeCmd::new();
+    let mut cmd = rtree::RtreeCmd::new(args.exclusions);
 
     // ルートディレクトリを出力
     cmd.print_current_dir(&args.target_dir);
 
     // PathBufに変換
     let target_path = path::PathBuf::from(&args.target_dir);
-    cmd.run(&target_path, 0, &args.exclusions);
+    cmd.run(&target_path, 0);
 
     // ディレクトリ、ファイルのカウントを出力
     cmd.print_cnt();
