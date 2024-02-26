@@ -25,11 +25,11 @@ pub fn run(target: &path::PathBuf, level: isize, exclusions: &Vec<String>) {
         }
 
         if path.is_dir() {
-            println!("|-- <{}>", fname);
+            println!("├── {}", fname);
             run(&path, level + 1, &exclusions);
             continue;
         }
-        println!("|-- <{}>", fname);
+        println!("├── {}", fname);
     }
 }
 
