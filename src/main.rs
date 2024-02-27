@@ -29,9 +29,8 @@ fn main() {
     // ルートディレクトリを出力
     cmd.print_current_dir(&args.target_dir);
 
-    // PathBufに変換
-    let target_path = path::PathBuf::from(&args.target_dir);
-    cmd.run(&target_path, 0);
+    // コマンド実行
+    cmd.run(&path::PathBuf::from(&args.target_dir), 0);
 
     // ディレクトリ、ファイルのカウントを出力
     cmd.print_cnt();
