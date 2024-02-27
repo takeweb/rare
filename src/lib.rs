@@ -1,4 +1,8 @@
-use std::{env, fs, path};
+use std::{
+    env,
+    fs::{self, DirEntry},
+    path,
+};
 
 /// ツリーコマンド
 #[derive(Clone)]
@@ -24,15 +28,24 @@ impl RtreeCmd {
     /// * `exclusions` - 除外キーワード
     pub fn run(&mut self, target_path: &path::PathBuf, level: isize) {
         // ファイル一覧を取得
-        let mut files: Vec<_> = fs::read_dir(target_path)
+        let mut files: Vec<DirEntry> = fs::read_dir(target_path)
             .unwrap()
             .map(|r| r.unwrap())
             .collect();
+
+        // ファイル一覧をソート
         files.sort_by_key(|dir| dir.path());
 
+        // 最後の要素を取り出し
+        let last = &files.last().unwrap();
+        let last_path = last.path();
+        let last_fname = last_path.file_name().unwrap().to_string_lossy();
+
+        // ファイル一覧分処理を実行
         for ent in files {
             let path = ent.path();
 
+            // 階層出力
             for _ in 1..=level {
                 print!("│   ");
             }
@@ -52,22 +65,34 @@ impl RtreeCmd {
 
             if path.is_file() {
                 self.f_cnt += 1;
+
+                if fname.eq_ignore_ascii_case(&last_fname) {
+                    println!("└── {}", fname);
+                } else {
+                    println!("├── {}", fname);
+                }
             }
 
             if path.is_dir() {
-                println!("├── {}", fname);
+                if fname.eq_ignore_ascii_case(&last_fname) {
+                    println!("└── {}", fname);
+                } else {
+                    println!("├── {}", fname);
+                }
                 self.d_cnt += 1;
+
+                // 再帰呼び出し
                 self.run(&path, level + 1);
                 continue;
             }
-            println!("├── {}", fname);
         }
     }
 
     /// ルートディレクトリを出力
     ///
     /// * `target_dir` - 対象ディレクトリ
-    pub fn print_current_dir(&self, target_dir: &str) {
+    pub fn print_current_dir(&mut self, target_dir: &str) {
+        self.d_cnt += 1;
         let result = if target_dir == "." {
             // 現在のディレクトリを返す
             let pwd = env::current_dir().unwrap();
