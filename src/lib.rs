@@ -14,7 +14,6 @@ pub struct RtreeCmd {
 impl RtreeCmd {
     /// ツリーコマンドの初期化
     pub fn new(exclusions: Vec<String>) -> Self {
-        // exclusions.push(String::from(".DS_Store"));
         RtreeCmd {
             d_cnt: 0,
             f_cnt: 0,
@@ -26,7 +25,6 @@ impl RtreeCmd {
     ///
     /// * `target_path` - 対象ディレクトリ
     /// * `level` - 階層レベル
-    /// * `exclusions` - 除外キーワード
     pub fn run(&mut self, target_path: &path::PathBuf, level: isize) {
         // ファイル一覧を取得
         let mut files: Vec<DirEntry> = fs::read_dir(target_path)
@@ -49,22 +47,18 @@ impl RtreeCmd {
             let fname = path.file_name().unwrap().to_string_lossy();
 
             // 除外ファイル判定
-            let mut ex_flg = false;
-            for exclusion in &self.exclusions {
-                if exclusion != "" && None != fname.find(exclusion) {
-                    ex_flg = true;
-                    continue;
-                }
-            }
-            if ex_flg {
-                continue;
-            }
+            let result = &self.exclusions.iter().position(|x| x == &fname.to_string());
+            let _ = match result {
+                Some(_) => continue,
+                None => 0,
+            };
 
             // 階層出力
             for _ in 1..=level {
                 print!("│    ");
             }
 
+            // 対象のパスがファイルの場合
             if path.is_file() {
                 self.f_cnt += 1;
 
@@ -75,6 +69,7 @@ impl RtreeCmd {
                 }
             }
 
+            // 対象のパスがディレクトリの場合
             if path.is_dir() {
                 if fname.eq_ignore_ascii_case(&last_fname) {
                     println!("└── [{}]", fname);
