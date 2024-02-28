@@ -10,6 +10,7 @@ pub struct RtreeCmd {
     d_cnt: isize,
     f_cnt: isize,
     exclusions: Vec<String>,
+    last_dir: String,
 }
 impl RtreeCmd {
     /// ツリーコマンドの初期化
@@ -18,6 +19,7 @@ impl RtreeCmd {
             d_cnt: 0,
             f_cnt: 0,
             exclusions,
+            last_dir: String::from(""),
         }
     }
 
@@ -39,6 +41,10 @@ impl RtreeCmd {
         let last = &files.last().unwrap();
         let last_path = last.path();
         let last_fname = last_path.file_name().unwrap().to_string_lossy();
+        if level == 0 && last_path.is_dir() {
+            println!("last: {}", last_fname.to_string());
+            self.last_dir = last_fname.to_string();
+        }
 
         // ファイル一覧分処理を実行
         for ent in files {
@@ -55,7 +61,16 @@ impl RtreeCmd {
 
             // 階層出力
             for _ in 1..=level {
-                print!("│    ");
+                let target_fname = target_path
+                    .file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .to_string();
+                if target_fname == self.last_dir {
+                    print!("     ");
+                } else {
+                    print!("│    ");
+                }
             }
 
             // 対象のパスがファイルの場合
@@ -80,7 +95,6 @@ impl RtreeCmd {
 
                 // 再帰呼び出し
                 self.run(&path, level + 1);
-                continue;
             }
         }
     }
