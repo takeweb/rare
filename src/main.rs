@@ -6,7 +6,7 @@ use std::path;
 #[command(version, about, long_about = None)]
 pub struct Args {
     /// Target directory
-    #[arg(value_name = "TARGET DIR", default_value = ".")]
+    #[arg(value_name = "TARGET DIR", default_value = ".tests/inputs")]
     target_dir: String,
 
     /// Exclusion Keywords
@@ -14,7 +14,8 @@ pub struct Args {
         short = 'e',
         long = "exclusions",
         required = false,
-        value_delimiter(',')
+        value_delimiter(','),
+        default_value = ".DS_Store"
     )]
     exclusions: Vec<String>,
 }
