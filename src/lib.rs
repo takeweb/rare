@@ -4,22 +4,32 @@ use std::{
     path,
 };
 
+#[derive(Clone)]
+struct LastInfo {
+    last_name: String,
+    last_level: isize,
+    last_flg: bool,
+}
+
 /// ツリーコマンド
 #[derive(Clone)]
 pub struct RtreeCmd {
     d_cnt: isize,
     f_cnt: isize,
     exclusions: Vec<String>,
-    last_dir: String,
+    current_flg: bool,
+    last_infos: Vec<LastInfo>,
 }
 impl RtreeCmd {
     /// ツリーコマンドの初期化
-    pub fn new(exclusions: Vec<String>) -> Self {
+    pub fn new(exclusions: Vec<String>, current_flg: bool) -> Self {
+        let last_infos = vec![];
         RtreeCmd {
             d_cnt: 0,
             f_cnt: 0,
             exclusions,
-            last_dir: String::from(""),
+            current_flg,
+            last_infos,
         }
     }
 
@@ -38,12 +48,16 @@ impl RtreeCmd {
         files.sort_by_key(|dir| dir.path());
 
         // 最後の要素を取り出し
-        let last = &files.last().unwrap();
+        let last: &&DirEntry = &files.last().unwrap();
         let last_path = last.path();
         let last_fname = last_path.file_name().unwrap().to_string_lossy();
-        if level == 0 && last_path.is_dir() {
-            println!("last: {}", last_fname.to_string());
-            self.last_dir = last_fname.to_string();
+        if last_path.is_dir() {
+            let last = LastInfo {
+                last_name: last_fname.to_string(),
+                last_level: level + 1,
+                last_flg: false,
+            };
+            self.last_infos.push(last);
         }
 
         // ファイル一覧分処理を実行
@@ -60,16 +74,51 @@ impl RtreeCmd {
             };
 
             // 階層出力
-            for _ in 1..=level {
+            for current_level in 1..=level {
                 let target_fname = target_path
                     .file_name()
                     .unwrap()
                     .to_string_lossy()
                     .to_string();
-                if target_fname == self.last_dir {
-                    print!("     ");
+
+                // println!(
+                //     "current_level: {}, target_fname: {}",
+                //     current_level, target_fname
+                // );
+
+                // 現在処理中のディレクトリが、その階層で最後かを判定
+                let result_last = &self
+                    .last_infos
+                    .iter()
+                    .position(|x| x.last_name == target_fname && x.last_level == current_level);
+                let last_flg = match result_last {
+                    Some(i) => {
+                        self.last_infos.get_mut(*i).unwrap().last_flg = true;
+                        true
+                    }
+                    None => false,
+                };
+
+                // 現在処理中のディレクトリ又はファイルが、最終階層配下かを判定
+                let result_last_child = &self.last_infos.iter().position(|x| {
+                    (x.last_name == target_fname
+                        && x.last_level == current_level
+                        && x.last_flg == true)
+                        || (x.last_level == current_level && x.last_flg == true)
+                        || (x.last_level - 1 >= current_level && x.last_flg == true)
+                });
+                let last_flg = match result_last_child {
+                    Some(i) => {
+                        self.last_infos.get_mut(*i).unwrap().last_flg = true;
+                        true
+                    }
+                    None => false,
+                };
+
+                if last_flg {
+                    print!("     ")
                 } else {
-                    print!("│    ");
+                    print!("│    ")
                 }
             }
 
@@ -104,7 +153,7 @@ impl RtreeCmd {
     /// * `target_dir` - 対象ディレクトリ
     pub fn print_current_dir(&mut self, target_dir: &str) {
         self.d_cnt += 1;
-        let result = if target_dir == "." {
+        let result = if target_dir == "." && self.current_flg {
             // 現在のディレクトリを返す
             let pwd = env::current_dir().unwrap();
             pwd.to_str().unwrap().to_string()
@@ -120,5 +169,14 @@ impl RtreeCmd {
     pub fn print_cnt(&self) {
         println!("");
         println!("{} directories, {} files", self.d_cnt, self.f_cnt);
+    }
+
+    pub fn print_last(&self) {
+        for item in self.last_infos.iter() {
+            println!(
+                "last_name: {} last_level: {} last_flg: {}",
+                item.last_name, item.last_level, item.last_flg
+            );
+        }
     }
 }

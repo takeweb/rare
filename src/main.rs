@@ -6,7 +6,7 @@ use std::path;
 #[command(version, about, long_about = None)]
 pub struct Args {
     /// Target directory
-    #[arg(value_name = "TARGET DIR", default_value = ".tests/inputs")]
+    #[arg(value_name = "TARGET DIR", default_value = ".")]
     target_dir: String,
 
     /// Exclusion Keywords
@@ -18,6 +18,15 @@ pub struct Args {
         default_value = ".DS_Store"
     )]
     exclusions: Vec<String>,
+
+    /// Display current directory
+    #[arg(
+        short = 'c',
+        long = "current_dir",
+        required = false,
+        default_value_t = false
+    )]
+    current_flg: bool,
 }
 
 fn main() {
@@ -25,7 +34,7 @@ fn main() {
     let args = Args::parse();
 
     // コマンドをインスタンス化
-    let mut cmd = rtree::RtreeCmd::new(args.exclusions);
+    let mut cmd = rtree::RtreeCmd::new(args.exclusions, args.current_flg);
 
     // ルートディレクトリを出力
     cmd.print_current_dir(&args.target_dir);
@@ -35,4 +44,6 @@ fn main() {
 
     // ディレクトリ、ファイルのカウントを出力
     cmd.print_cnt();
+
+    cmd.print_last();
 }
