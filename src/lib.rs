@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::{
     env,
     fs::{self, DirEntry},
@@ -7,6 +6,7 @@ use std::{
 
 #[derive(Clone)]
 struct LastInfo {
+    level: isize,
     last_name: String,
     last_flg: bool,
 }
@@ -18,12 +18,12 @@ pub struct RtreeCmd {
     f_cnt: isize,
     exclusions: Vec<String>,
     current_flg: bool,
-    last_infos: HashMap<usize, LastInfo>,
+    last_infos: Vec<LastInfo>,
 }
 impl RtreeCmd {
     /// ツリーコマンドの初期化
     pub fn new(exclusions: Vec<String>, current_flg: bool) -> Self {
-        let last_infos = HashMap::new();
+        let last_infos = vec![];
         RtreeCmd {
             d_cnt: 0,
             f_cnt: 0,
@@ -38,6 +38,9 @@ impl RtreeCmd {
     /// * `target_path` - 対象ディレクトリ
     /// * `level` - 階層レベル
     pub fn run(&mut self, target_path: &path::PathBuf, level: isize) {
+        // 対象ディレクトリ名取得
+        let target_fname = target_path.to_string_lossy().to_string();
+
         // ファイル一覧を取得
         let mut files: Vec<DirEntry> = fs::read_dir(target_path)
             .unwrap()
@@ -53,11 +56,11 @@ impl RtreeCmd {
         let last_fname = last_path.file_name().unwrap().to_string_lossy();
         if last_path.is_dir() {
             let last = LastInfo {
+                level: level + 1,
                 last_name: last_path.to_string_lossy().to_string(),
                 last_flg: false,
             };
-            let key: usize = (level + 1) as usize;
-            self.last_infos.insert(key, last);
+            self.last_infos.push(last);
         }
 
         // ファイル一覧分処理を実行
@@ -72,21 +75,19 @@ impl RtreeCmd {
                 .exclusions
                 .iter()
                 .position(|x| x == &current_fname.to_string());
-            let _ = match result {
+            match result {
                 Some(_) => continue,
                 None => 0,
             };
-
-            let target_fname = target_path.to_string_lossy().to_string();
 
             // 現在処理中のディレクトリが、その階層で最後かを判定
             let result_last = &self
                 .last_infos
                 .iter()
-                .position(|(_, info)| info.last_name == target_fname);
+                .position(|info| info.last_name == target_fname);
             match result_last {
-                Some(key) => {
-                    self.last_infos.get_mut(key).unwrap().last_flg = true;
+                Some(i) => {
+                    self.last_infos.get_mut(*i).unwrap().last_flg = true;
                     Some(true)
                 }
                 None => None,
@@ -98,7 +99,7 @@ impl RtreeCmd {
                 let result_last_child = &self
                     .last_infos
                     .iter()
-                    .position(|(level, info)| *level == current_level as usize && info.last_flg);
+                    .position(|info| info.level == current_level && info.last_flg);
                 let last_flg = match result_last_child {
                     Some(_) => true,
                     None => false,
@@ -161,10 +162,10 @@ impl RtreeCmd {
     }
 
     pub fn print_last(&self) {
-        for (key, item) in self.last_infos.iter() {
+        for item in self.last_infos.iter() {
             println!(
                 "last_level: {} last_name: {} last_flg: {}",
-                key, item.last_name, item.last_flg
+                item.level, item.last_name, item.last_flg
             );
         }
     }
