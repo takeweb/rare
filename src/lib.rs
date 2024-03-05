@@ -63,44 +63,37 @@ impl RtreeCmd {
         // ファイル一覧分処理を実行
         for ent in files {
             // パスからファイル名を取り出し
-            let path = ent.path();
-            let fname = path.file_name().unwrap().to_string_lossy();
+            let current_path = ent.path();
+            let current_fname: std::borrow::Cow<'_, str> =
+                current_path.file_name().unwrap().to_string_lossy();
 
             // 除外ファイル判定
-            let result = &self.exclusions.iter().position(|x| x == &fname.to_string());
+            let result = &self
+                .exclusions
+                .iter()
+                .position(|x| x == &current_fname.to_string());
             let _ = match result {
                 Some(_) => continue,
                 None => 0,
             };
 
+            let target_fname = target_path.to_string_lossy().to_string();
+
+            // 現在処理中のディレクトリが、その階層で最後かを判定
+            let result_last = &self
+                .last_infos
+                .iter()
+                .position(|(_, info)| info.last_name == target_fname);
+            match result_last {
+                Some(key) => {
+                    self.last_infos.get_mut(key).unwrap().last_flg = true;
+                    Some(true)
+                }
+                None => None,
+            };
+
             // 階層出力
             for current_level in 1..=level {
-                let parent_fname = target_path.to_string_lossy().to_string();
-
-                // println!(
-                //     "current_level: {}, target_fname: {}",
-                //     current_level, target_fname
-                // );
-
-                // 現在処理中のディレクトリが、その階層で最後かを判定
-                let result_last = &self.last_infos.iter().position(|(level, info)| {
-                    info.last_name == parent_fname && *level == current_level as usize
-                });
-                match result_last {
-                    Some(key) => {
-                        if self.last_infos.contains_key(key) {
-                            self.last_infos.remove(key);
-                            let last = LastInfo {
-                                last_name: last_path.to_string_lossy().to_string(),
-                                last_flg: true,
-                            };
-                            self.last_infos.insert(*key, last);
-                        }
-                        Some(true)
-                    }
-                    None => None,
-                };
-
                 // 現在処理中のディレクトリ又はファイルが最終レベルかを判定
                 let result_last_child = &self
                     .last_infos
@@ -119,27 +112,27 @@ impl RtreeCmd {
             }
 
             // 対象のパスがファイルの場合
-            if path.is_file() {
+            if current_path.is_file() {
                 self.f_cnt += 1;
 
-                if fname.eq_ignore_ascii_case(&last_fname) {
-                    println!("└── {}", fname);
+                if current_fname.eq_ignore_ascii_case(&last_fname) {
+                    println!("└── {}", current_fname);
                 } else {
-                    println!("├── {}", fname);
+                    println!("├── {}", current_fname);
                 }
             }
 
             // 対象のパスがディレクトリの場合
-            if path.is_dir() {
-                if fname.eq_ignore_ascii_case(&last_fname) {
-                    println!("└── [{}]", fname);
+            if current_path.is_dir() {
+                if current_fname.eq_ignore_ascii_case(&last_fname) {
+                    println!("└── [{}]", current_fname);
                 } else {
-                    println!("├── [{}]", fname);
+                    println!("├── [{}]", current_fname);
                 }
                 self.d_cnt += 1;
 
                 // 再帰呼び出し
-                self.run(&path, level + 1);
+                self.run(&current_path, level + 1);
             }
         }
     }
