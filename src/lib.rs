@@ -71,7 +71,7 @@ impl RtreeCmd {
             Some(i) => {
                 self.last_infos.get_mut(*i).unwrap().flg = true;
 
-                // 既に1階層下の要素があったら、削除
+                // 既に1階層下の要素があったら、フラグを戻す
                 let result_lower = &self
                     .last_infos
                     .iter()
