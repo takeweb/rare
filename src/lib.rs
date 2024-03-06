@@ -118,30 +118,26 @@ impl RtreeCmd {
                 };
 
                 if last_flg {
-                    print!("     ")
+                    print!("    ")
                 } else {
-                    print!("│    ")
+                    print!("│   ")
                 }
+            }
+
+            // tree出力
+            if current_fname.eq_ignore_ascii_case(&last_fname) {
+                println!("└── {}", current_fname);
+            } else {
+                println!("├── {}", current_fname);
             }
 
             // 対象のパスがファイルの場合
             if current_path.is_file() {
                 self.f_cnt += 1;
-
-                if current_fname.eq_ignore_ascii_case(&last_fname) {
-                    println!("└── {}", current_fname);
-                } else {
-                    println!("├── {}", current_fname);
-                }
             }
 
             // 対象のパスがディレクトリの場合
             if current_path.is_dir() {
-                if current_fname.eq_ignore_ascii_case(&last_fname) {
-                    println!("└── [{}]", current_fname);
-                } else {
-                    println!("├── [{}]", current_fname);
-                }
                 self.d_cnt += 1;
 
                 // 更に下位階層へ(再帰呼び出し)

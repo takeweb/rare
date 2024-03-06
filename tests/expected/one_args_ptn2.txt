@@ -1,12 +1,12 @@
 ./tests/inputs/inputs2
-├── [aaa]
-│    └── one.txt
-├── [bbb]
-│    ├── [ccc]
-│    │    ├── [ddd]
-│    │    │    └── empty.txt
-│    │    └── three.txt
-│    └── ten.txt
+├── aaa
+│   └── one.txt
+├── bbb
+│   ├── ccc
+│   │   ├── ddd
+│   │   │   └── empty.txt
+│   │   └── three.txt
+│   └── ten.txt
 └── two.txt
 
 5 directories, 5 files

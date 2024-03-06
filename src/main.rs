@@ -46,5 +46,5 @@ fn main() {
     cmd.print_cnt();
 
     // 各階層毎の最終ディレクトリを出力
-    cmd.print_last();
+    // cmd.print_last();
 }

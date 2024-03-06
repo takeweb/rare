@@ -1,8 +1,8 @@
 ./tests/inputs/inputs1
-├── [aaa]
-│    └── one.txt
-└── [bbb]
-     ├── eleven.txt
-     └── ten.txt
+├── aaa
+│   └── one.txt
+└── bbb
+    ├── eleven.txt
+    └── ten.txt
 
 3 directories, 3 files
