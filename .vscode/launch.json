@@ -1,0 +1,83 @@
+{
+    // IntelliSense を使用して利用可能な属性を学べます。
+    // 既存の属性の説明をホバーして表示します。
+    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'rtree'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=rtree"
+                ],
+                "filter": {
+                    "name": "rtree",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'rtree'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=rtree",
+                    "--package=rtree"
+                ],
+                "filter": {
+                    "name": "rtree",
+                    "kind": "bin"
+                }
+            },
+            "args": ["./tests"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'rtree'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=rtree",
+                    "--package=rtree"
+                ],
+                "filter": {
+                    "name": "rtree",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'cli'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=cli",
+                    "--package=rtree"
+                ],
+                "filter": {
+                    "name": "cli",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

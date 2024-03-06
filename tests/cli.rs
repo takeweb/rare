@@ -1,5 +1,4 @@
 use assert_cmd::Command;
-use predicates::prelude::*;
 use std::error::Error;
 use std::fs;
 
@@ -9,24 +8,24 @@ const PRG: &str = "rtree";
 const DIR_PTN1: &str = "./tests/inputs/inputs1";
 const DIR_PTN2: &str = "./tests/inputs/inputs2";
 const DIR_PTN3: &str = "./tests";
+const EXP_PTN1: &str = "tests/expected/one_args_ptn1.txt";
+const EXP_PTN2: &str = "tests/expected/one_args_ptn2.txt";
+const EXP_PTN3: &str = "tests/expected/one_args_ptn3.txt";
 
 // --------------------------------------------------
 #[test]
 fn one_args_ptn1() -> TestResult {
-    let expected = "tests/expected/one_args_ptn1.txt";
-    run(&[DIR_PTN1], expected)
+    run(&[DIR_PTN1], EXP_PTN1)
 }
 
 #[test]
 fn one_args_ptn2() -> TestResult {
-    let expected = "tests/expected/one_args_ptn2.txt";
-    run(&[DIR_PTN2], expected)
+    run(&[DIR_PTN2], EXP_PTN2)
 }
 
 #[test]
 fn one_args_ptn3() -> TestResult {
-    let expected = "tests/expected/one_args_ptn3.txt";
-    run(&[DIR_PTN3], expected)
+    run(&[DIR_PTN3], EXP_PTN3)
 }
 
 // --------------------------------------------------
