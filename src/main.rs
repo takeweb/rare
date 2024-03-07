@@ -14,8 +14,7 @@ pub struct Args {
         short = 'e',
         long = "exclusions",
         required = false,
-        value_delimiter(','),
-        // default_value = ".DS_Store,.git,.gitignore,.vscode,.fingerprint,.rustc_info.json"
+        value_delimiter(',')
     )]
     exclusions: Vec<String>,
 
