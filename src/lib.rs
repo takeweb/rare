@@ -155,7 +155,7 @@ impl RtreeCmd {
     /// * `target_dir` - 対象ディレクトリ
     pub fn print_current_dir(&mut self, target_dir: &str) {
         self.d_cnt += 1;
-        let result = if target_dir == "." && self.current_flg {
+        let result = if self.current_flg {
             // 現在のディレクトリを返す
             let pwd = env::current_dir().unwrap();
             pwd.to_str().unwrap().to_string()
