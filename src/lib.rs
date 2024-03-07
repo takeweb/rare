@@ -4,6 +4,8 @@ use std::{
     path,
 };
 
+use regex::Regex;
+
 #[derive(Clone)]
 struct LastInfo {
     level: isize,
@@ -92,18 +94,20 @@ impl RtreeCmd {
         for ent in files {
             // パスからファイル名を取り出し
             let current_path = ent.path();
-            let current_fname: std::borrow::Cow<'_, str> =
-                current_path.file_name().unwrap().to_string_lossy();
+            let current_fname = current_path.file_name().unwrap().to_string_lossy();
 
             // 除外ファイル判定
-            let result = &self
-                .exclusions
-                .iter()
-                .position(|x| x == &current_fname.to_string());
+            let result = &self.exclusions.iter().position(|x| x == &current_fname);
             match result {
                 Some(_) => continue,
                 None => 0,
             };
+
+            // 隠しファイル除外判定
+            let re = Regex::new(r"^\..").unwrap();
+            if re.is_match(&current_fname) {
+                continue;
+            }
 
             // 階層出力
             for current_level in 1..=level {

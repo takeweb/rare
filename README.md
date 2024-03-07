@@ -1,6 +1,8 @@
 # rtree
 
 ## 改善ポイント
-* .DS_Store,.git,.gitignore,.vscode等をデフォルトで除外する。
+* 最初に処理した最下層は、次の階層では無効とする。・・・完了(2024/03/06)
+* .DS_Store,.git,.gitignore,.vscode等をデフォルトで除外する。・・・完了(2024/03/07)
 * tree --gitignoreのように、.gitignoreを読み込んで除外する。
+* 空ディレクトリ対策
 *

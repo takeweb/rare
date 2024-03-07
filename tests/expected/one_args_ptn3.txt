@@ -3,7 +3,8 @@
 ├── expected
 │   ├── one_args_ptn1.txt
 │   ├── one_args_ptn2.txt
-│   └── one_args_ptn3.txt
+│   ├── one_args_ptn3.txt
+│   └── one_args_ptn4.txt
 └── inputs
     ├── inputs1
     │   ├── aaa
@@ -22,4 +23,4 @@
         │   └── ten.txt
         └── two.txt
 
-11 directories, 12 files
+11 directories, 13 files
