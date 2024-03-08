@@ -57,6 +57,20 @@ impl RtreeCmd {
             let last: &&DirEntry = &files.last().unwrap();
             let last_path = last.path();
             last_fname = last_path.file_name().unwrap().to_string_lossy().to_string();
+
+            let result_lower = &self
+                .last_infos
+                .iter()
+                .position(|last| last.level == level + 1);
+            match result_lower {
+                // 既に同一階層の要素があったら、削除
+                Some(i) => {
+                    self.last_infos.remove(*i);
+                    Some(true)
+                }
+                None => None,
+            };
+
             if last_path.is_dir() {
                 let last = LastInfo {
                     level: level + 1,
@@ -75,19 +89,6 @@ impl RtreeCmd {
         match result_last {
             Some(i) => {
                 self.last_infos.get_mut(*i).unwrap().flg = true;
-
-                // 既に1階層下の要素があったら、フラグを戻す
-                let result_lower = &self
-                    .last_infos
-                    .iter()
-                    .position(|last| last.level == level + 1);
-                match result_lower {
-                    Some(i) => {
-                        self.last_infos.get_mut(*i).unwrap().flg = false;
-                        Some(true)
-                    }
-                    None => None,
-                };
                 Some(true)
             }
             None => None,

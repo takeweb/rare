@@ -1,0 +1,45 @@
+./tests
+├── cli.rs
+├── expected
+│   ├── one_args_ptn1.txt
+│   ├── one_args_ptn2.txt
+│   ├── one_args_ptn3.txt
+│   ├── one_args_ptn4.txt
+│   └── one_args_ptn5.txt
+└── inputs
+    ├── input1
+    │   ├── aaa
+    │   │   └── one.txt
+    │   └── bbb
+    │       ├── eleven.txt
+    │       └── ten.txt
+    ├── input2
+    │   ├── aaa
+    │   │   └── one.txt
+    │   ├── bbb
+    │   │   ├── ccc
+    │   │   │   ├── ddd
+    │   │   │   │   └── empty.txt
+    │   │   │   └── three.txt
+    │   │   └── ten.txt
+    │   └── two.txt
+    └── input3
+        ├── aaa
+        │   └── one.txt
+        ├── bbb
+        │   ├── ccc
+        │   │   ├── ddd
+        │   │   │   └── empty.txt
+        │   │   └── three.txt
+        │   └── ten.txt
+        ├── ccc
+        │   └── one.txt
+        ├── ddd
+        │   ├── ccc
+        │   │   ├── ddd
+        │   │   │   └── empty.txt
+        │   │   └── three.txt
+        │   └── ten.txt
+        └── two.txt
+
+20 directories, 23 files

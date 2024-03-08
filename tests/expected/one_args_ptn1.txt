@@ -1,4 +1,4 @@
-./tests/inputs/inputs1
+./tests/inputs/input1
 ├── aaa
 │   └── one.txt
 └── bbb
