@@ -52,16 +52,19 @@ impl RtreeCmd {
         files.sort_by_key(|dir| dir.path());
 
         // 最後の要素を取り出し
-        let last: &&DirEntry = &files.last().unwrap();
-        let last_path = last.path();
-        let last_fname = last_path.file_name().unwrap().to_string_lossy();
-        if last_path.is_dir() {
-            let last = LastInfo {
-                level: level + 1,
-                name: last_path.to_string_lossy().to_string(),
-                flg: false,
-            };
-            self.last_infos.push(last);
+        let mut last_fname = String::from("");
+        if files.len() > 0 {
+            let last: &&DirEntry = &files.last().unwrap();
+            let last_path = last.path();
+            last_fname = last_path.file_name().unwrap().to_string_lossy().to_string();
+            if last_path.is_dir() {
+                let last = LastInfo {
+                    level: level + 1,
+                    name: last_path.to_string_lossy().to_string(),
+                    flg: false,
+                };
+                self.last_infos.push(last);
+            }
         }
 
         // 現在処理中のディレクトリが、その階層で最後かを判定
@@ -122,9 +125,9 @@ impl RtreeCmd {
                 };
 
                 if last_flg {
-                    print!("    ")
+                    print!("    ");
                 } else {
-                    print!("│   ")
+                    print!("│   ");
                 }
             }
 
